@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "76f8cec3-90cb-45e9-8d96-c215bbb3e8d6",
+		"name": "OKTA Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38804108"
+	},
+	"item": [
+		{
+			"name": "get Token client creds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"pm.globals.set('token', response.access_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{client_secret}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{client_id}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "{{grant_type}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{scope}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{okta-server}}/v1/token",
+					"host": [
+						"{{okta-server}}"
+					],
+					"path": [
+						"v1",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User - Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"pm.globals.set('user_id', response.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ssws_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"profile\": {\n      \"firstName\": \"cvxsd\",\n      \"lastName\": \"gfffbf\",\n      \"email\": \"cvxsd.cvefer@gmail.com\",\n      \"login\": \"cvxsd.cvefer@gmail.com\",\n      \"mobilePhone\": \"114-415-1337\"\n    },\n    \"credentials\": {\n      \"password\": {\n        \"value\": \"Password#123\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app-server}}/api/user",
+					"host": [
+						"{{app-server}}"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\n  'https://subdomain.okta.com/api/v1/users?activate=true&provider=false&nextLogin=changePassword' \\\n  -H 'Authorization: YOUR_API_KEY_HERE' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"profile\": {\n      \"firstName\": \"Isaac\",\n      \"lastName\": \"Brock\",\n      \"email\": \"isaac.brock@example.com\",\n      \"login\": \"isaac.brock@example.com\",\n      \"mobilePhone\": \"555-415-1337\"\n    },\n    \"credentials\": {\n      \"password\": {\n        \"value\": \"tlpWENT2m\"\n      }\n    }\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "List Users App",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJvYWFFY1g4S2VKMHN1TWMxZmt5a19yNVhKenlzRVFYaU00M2p6ZVVsei0wIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULlVUWUpWaUpOLWNUcnRaOWhBT18xRklGNXloQWg5MnplN09pSVZHUVB4YXciLCJpc3MiOiJodHRwczovL2Rldi03NzkwNDk1MC5va3RhLmNvbS9vYXV0aDIvYXVza285cHgxZ2hjZ0JYc2I1ZDciLCJhdWQiOiJkZWZhdWx0IiwiaWF0IjoxNzMwOTE4NzQ1LCJleHAiOjE3MzA5MjIzNDUsImNpZCI6IjBvYWtxYWV6YjNhR1UzZ2lvNWQ3Iiwic2NwIjpbImFwaSJdLCJzdWIiOiIwb2FrcWFlemIzYUdVM2dpbzVkNyJ9.LJdgVPeTZOKJ3oWXwagLwQnpA36mwWHXk_JeIfE4hBk5C0fE1Ca5nKGXoWyYqRvuQrkTVD8FEaf4aZwmToduekOKzbHciKt8Y1j7k2sjvMLbzkyGYfFA-McqT5_lt1SR0NmYceGBzwRSgAnwUAOBSuceVfodHRaPEhClAeCpJMHkWki5UB1OINq3eHvU4Zb9XqerKxyi19IJ55QIlc7uW1h0iA_4zV_6mp_P4Sq5g4fN_rrYYxRTKjeSb88s5nD5K200l7JwD6EHC6lHKb-Pa5Su69hqbr74YWSFMQUxbpTAidpQjvsMMW-07NoSe1lMVTLecBB4w2LmJolIatr0_w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "SSWS 00VCgNfsvjYQhjVlGmnQ-kKaw8g23_eJp8lcxlqa7L",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"profile\": {\n      \"firstName\": \"vdfxcc\",\n      \"lastName\": \"gfffbf\",\n      \"email\": \"tymv.cvefer@gmail.com\",\n      \"login\": \"tymv.cvefer@gmail.com\",\n      \"mobilePhone\": \"974-415-1337\"\n    },\n    \"credentials\": {\n      \"password\": {\n        \"value\": \"Password#123\"\n      }\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8082/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"user"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\n  'https://subdomain.okta.com/api/v1/users?activate=true&provider=false&nextLogin=changePassword' \\\n  -H 'Authorization: YOUR_API_KEY_HERE' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"profile\": {\n      \"firstName\": \"Isaac\",\n      \"lastName\": \"Brock\",\n      \"email\": \"isaac.brock@example.com\",\n      \"login\": \"isaac.brock@example.com\",\n      \"mobilePhone\": \"555-415-1337\"\n    },\n    \"credentials\": {\n      \"password\": {\n        \"value\": \"tlpWENT2m\"\n      }\n    }\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "Assign User to Application",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "SSWS {your_api_token}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\": \"user_id\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{yourOktaDomain}/api/v1/apps/{appId}/users",
+					"protocol": "https",
+					"host": [
+						"{yourOktaDomain}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"apps",
+						"{appId}",
+						"users"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"https://{yourOktaDomain}/api/v1/apps/{appId}/users\" \\\n-H \"Authorization: SSWS {your_api_token}\" \\\n-H \"Content-Type: application/json\" \\\n-d '{\"id\": \"user_id\"}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Assign User to Application Copy",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Make user an admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ssws_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\": \"user_id\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{okta-server}}/api/v1/groups/{groupId}/users",
+					"host": [
+						"{{okta-server}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"groups",
+						"{groupId}",
+						"users"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"https://{yourOktaDomain}/api/v1/groups/{groupId}/users\" \\\n-H \"Authorization: SSWS {your_api_token}\" \\\n-H \"Content-Type: application/json\" \\\n-d '{\"id\": \"user_id\"}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Application List",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{ssws_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://dev-77904950-admin.okta.com/api/v1/apps",
+					"protocol": "https",
+					"host": [
+						"dev-77904950-admin",
+						"okta",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"apps"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "okta-server",
+			"value": "https://dev-77904950.okta.com/oauth2/ausko9px1ghcgBXsb5d7"
+		},
+		{
+			"key": "client_id",
+			"value": "0oakqaezb3aGU3gio5d7"
+		},
+		{
+			"key": "client_secret",
+			"value": "c3fdPPuHaGD5KHZfR0ZuNZVSl9mGwGFBkSHutoxRJojGGK3u0i1cqRUDqwlLZy8i"
+		},
+		{
+			"key": "grant_type",
+			"value": "client_credentials"
+		},
+		{
+			"key": "scope",
+			"value": "api"
+		},
+		{
+			"key": "ssws_token",
+			"value": "SSWS 00VCgNfsvjYQhjVlGmnQ-kKaw8g23_eJp8lcxlqa7L"
+		},
+		{
+			"key": "app-server",
+			"value": "http://localhost:8082"
+		}
+	]
+}
